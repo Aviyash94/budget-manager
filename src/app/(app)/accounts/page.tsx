@@ -6,6 +6,8 @@ import { addAccount, editAccount, removeAccount } from "../actions";
 import { ConfirmForm } from "../confirm-form";
 import { EmptyState, ErrorBanner, Field, inputCls, PageTitle } from "../ui";
 
+export const metadata = { title: "Accounts" };
+
 const TYPES = [
   { value: "bank", label: "Bank", icon: "🏦", tone: "bg-sky-soft text-sky-deep" },
   { value: "cash", label: "Cash", icon: "💵", tone: "bg-mint-soft text-mint-deep" },

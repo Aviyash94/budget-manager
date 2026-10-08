@@ -9,6 +9,8 @@ import { clearBudget, copyBudgets, saveBudget } from "../actions";
 import { ConfirmForm } from "../confirm-form";
 import { EmptyState, ErrorBanner, MonthNav, monthFrom, PageTitle, toneFor } from "../ui";
 
+export const metadata = { title: "Budgets" };
+
 export default async function BudgetsPage({
   searchParams,
 }: {

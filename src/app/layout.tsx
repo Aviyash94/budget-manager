@@ -8,8 +8,11 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: "Budget Manager",
-  description: "Plan your month, track spending and stay within your budget.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  title: { default: "Budget Manager | Monthly Budget Planner", template: "%s | Budget Manager" },
+  description:
+    "Plan your month with category envelopes, track income and spending, and see what is left to spend. A simple personal budget manager in MUR.",
+  openGraph: { type: "website", siteName: "Budget Manager" },
 };
 
 export const viewport: Viewport = {

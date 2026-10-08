@@ -5,6 +5,8 @@ import { addCategory, editCategory, removeCategory } from "../actions";
 import { ConfirmForm } from "../confirm-form";
 import { ErrorBanner, Field, inputCls, PageTitle, toneFor } from "../ui";
 
+export const metadata = { title: "Categories" };
+
 const KINDS = [
   {
     kind: "expense",

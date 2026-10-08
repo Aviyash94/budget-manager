@@ -5,6 +5,8 @@ import { requireUser } from "@/server/session";
 import { getMonthSummary, type CategorySummary } from "@/server/summary";
 import { EmptyState, MonthNav, monthFrom, PageTitle, toneFor } from "./ui";
 
+export const metadata = { title: "Dashboard" };
+
 function Stat({
   icon,
   label,

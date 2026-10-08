@@ -11,6 +11,8 @@ import { ConfirmForm } from "../confirm-form";
 import { EmptyState, ErrorBanner, MonthNav, monthFrom, PageTitle, toneFor } from "../ui";
 import { TransactionForm } from "./transaction-form";
 
+export const metadata = { title: "Transactions" };
+
 type Row = Awaited<ReturnType<typeof listTransactions>>[number];
 
 const KIND_STYLE = {

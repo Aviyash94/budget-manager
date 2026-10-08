@@ -10,6 +10,8 @@ import { editTransaction } from "../../../actions";
 import { ErrorBanner, PageTitle } from "../../../ui";
 import { TransactionForm } from "../../transaction-form";
 
+export const metadata = { title: "Edit transaction" };
+
 export default async function EditTransactionPage({
   params,
   searchParams,

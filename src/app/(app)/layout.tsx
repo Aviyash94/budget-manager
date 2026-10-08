@@ -1,7 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { signOut } from "@/auth";
 import { requireUser } from "@/server/session";
 import { DesktopNav, MobileTabBar } from "./nav-links";
+
+// Private, per-user pages: keep them out of search results.
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { email } = await requireUser();

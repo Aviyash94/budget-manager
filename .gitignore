@@ -50,3 +50,9 @@ next-env.d.ts
 e2e.db*
 /test-results/
 /playwright-report/
+
+# .claude
+.claude
+
+# .agent
+.agents
