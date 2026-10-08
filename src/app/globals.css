@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+/*
+ * Pastel theme. Fills are bright pastels; text is always the dark "ink" or a -deep shade so
+ * contrast stays readable (white text on pastel would not).
+ */
+@theme {
+  --color-ink: #2b2a4c;
+  --color-ink-soft: #66658a;
+
+  --color-lav: #c4b5fd;
+  --color-lav-soft: #ede9fe;
+  --color-lav-deep: #6444d6;
+
+  --color-pink: #fbcfe8;
+  --color-pink-soft: #fdf2f8;
+  --color-pink-deep: #be185d;
+
+  --color-mint: #a7f3d0;
+  --color-mint-soft: #ecfdf5;
+  --color-mint-deep: #047857;
+
+  --color-peach: #fed7aa;
+  --color-peach-soft: #fff7ed;
+  --color-peach-deep: #c2410c;
+
+  --color-sky: #bae6fd;
+  --color-sky-soft: #f0f9ff;
+  --color-sky-deep: #0369a1;
+
+  --color-butter: #fde68a;
+  --color-butter-soft: #fffbeb;
+  --color-butter-deep: #a16207;
+
+  /* progress bar fills */
+  --color-ok: #6ee7b7;
+  --color-warn: #fcd34d;
+  --color-over: #fda4af;
+  --color-over-deep: #be123c;
+
+  --font-sans: var(--font-nunito), ui-rounded, system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  background:
+    radial-gradient(1100px 600px at 8% -10%, #fce7f3 0%, transparent 60%),
+    radial-gradient(900px 520px at 100% 0%, #e0e7ff 0%, transparent 55%),
+    radial-gradient(900px 520px at 50% 115%, #d1fae5 0%, transparent 60%), #fdf8ff;
+  background-attachment: fixed;
+}
+
+@layer components {
+  .card {
+    @apply rounded-3xl bg-white/85 p-5 ring-1 ring-white shadow-[0_8px_28px_-10px_rgba(100,68,214,0.28)];
+  }
+
+  .input {
+    @apply min-h-10 w-full rounded-xl border-2 border-lav-soft bg-white px-3 py-2 text-sm text-ink
+      placeholder:text-ink-soft/70 transition focus:border-lav focus:ring-4 focus:ring-lav/30 focus:outline-none;
+  }
+
+  .btn {
+    @apply inline-flex min-h-10 cursor-pointer whitespace-nowrap items-center justify-center gap-1.5 rounded-full bg-lav px-5 py-2 text-sm font-extrabold text-ink
+      shadow-sm transition hover:brightness-95 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60
+      focus-visible:ring-4 focus-visible:ring-lav/50 focus-visible:outline-none;
+  }
+
+  .btn-soft {
+    @apply inline-flex min-h-9 cursor-pointer whitespace-nowrap items-center justify-center gap-1 rounded-full bg-lav-soft px-3.5 py-1.5 text-sm font-bold text-lav-deep
+      transition hover:bg-lav/60 active:scale-95 focus-visible:ring-4 focus-visible:ring-lav/50 focus-visible:outline-none;
+  }
+
+  .btn-danger {
+    @apply inline-flex min-h-9 cursor-pointer whitespace-nowrap items-center justify-center gap-1 rounded-full bg-pink-soft px-3.5 py-1.5 text-sm font-bold text-pink-deep
+      transition hover:bg-pink active:scale-95 focus-visible:ring-4 focus-visible:ring-pink/60 focus-visible:outline-none;
+  }
+
+  .label {
+    @apply flex flex-col gap-1 text-xs font-bold text-ink-soft;
+  }
+
+  .section-title {
+    @apply mb-3 text-xs font-extrabold tracking-wider text-ink-soft uppercase;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
