@@ -15,8 +15,30 @@ export const users = sqliteTable("users", {
   id: id(),
   email: text("email").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
+  /** ISO time of the last password reset. Sessions issued before it are rejected (see requireUser). */
+  passwordChangedAt: text("password_changed_at"),
   createdAt: createdAt(),
 });
+
+/** Only the SHA-256 of the emailed token is stored, so a database leak can't be used to reset accounts. */
+export const passwordResetTokens = sqliteTable(
+  "password_reset_tokens",
+  {
+    id: id(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    tokenHash: text("token_hash").notNull(),
+    /** ISO timestamps; compared as strings. */
+    createdAt: text("created_at").notNull(),
+    expiresAt: text("expires_at").notNull(),
+    usedAt: text("used_at"),
+  },
+  (t) => [
+    uniqueIndex("password_reset_tokens_hash_uq").on(t.tokenHash),
+    index("password_reset_tokens_user_idx").on(t.userId),
+  ],
+);
 
 export const accounts = sqliteTable(
   "accounts",

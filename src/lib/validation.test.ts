@@ -1,5 +1,32 @@
 import { describe, expect, it } from "vitest";
-import { budgetSchema, transactionSchema } from "./validation";
+import {
+  budgetSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  transactionSchema,
+} from "./validation";
+
+describe("password reset schemas", () => {
+  const ok = { token: "abc", password: "long-enough-pw", confirm: "long-enough-pw" };
+
+  it("accepts matching passwords and normalises the email", () => {
+    expect(resetPasswordSchema.safeParse(ok).success).toBe(true);
+    expect(forgotPasswordSchema.parse({ email: "  A@Test.MU " }).email).toBe("a@test.mu");
+  });
+
+  it("rejects mismatch, short, over-long (bcrypt 72) and tokenless input", () => {
+    expect(resetPasswordSchema.safeParse({ ...ok, confirm: "different-pw!" }).success).toBe(false);
+    expect(
+      resetPasswordSchema.safeParse({ ...ok, password: "short", confirm: "short" }).success,
+    ).toBe(false);
+    const long = "x".repeat(73);
+    expect(resetPasswordSchema.safeParse({ ...ok, password: long, confirm: long }).success).toBe(
+      false,
+    );
+    expect(resetPasswordSchema.safeParse({ ...ok, token: "" }).success).toBe(false);
+    expect(forgotPasswordSchema.safeParse({ email: "not-an-email" }).success).toBe(false);
+  });
+});
 
 const base = {
   type: "expense",

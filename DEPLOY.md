@@ -47,13 +47,35 @@ file in `drizzle/`, then migrate **before** deploying the code that needs it).
 Import the repository in Vercel (framework preset: Next.js, no custom build settings), then add these
 environment variables for Production (and Preview if you use previews):
 
-| Name               | Value                                                                         |
-| ------------------ | ----------------------------------------------------------------------------- |
-| `DATABASE_URL`     | the `libsql://...` URL                                                        |
-| `TURSO_AUTH_TOKEN` | the token from step 2                                                         |
-| `AUTH_SECRET`      | a fresh random string: `openssl rand -base64 32` (do not reuse the local one) |
+| Name                   | Value                                                                                  |
+| ---------------------- | -------------------------------------------------------------------------------------- |
+| `DATABASE_URL`         | the `libsql://...` URL                                                                 |
+| `TURSO_AUTH_TOKEN`     | the token from step 2                                                                  |
+| `AUTH_SECRET`          | a fresh random string: `openssl rand -base64 32` (do not reuse the local one)          |
+| `NEXT_PUBLIC_SITE_URL` | your public URL, no trailing slash, e.g. `https://budget-manager-ten-omega.vercel.app` |
+| `RESEND_API_KEY`       | API key for password-reset emails (see "Password-reset emails" below)                  |
+| `EMAIL_FROM`           | sender, e.g. `Budget Manager <noreply@your-domain.example>`                            |
 
-`AUTH_TRUST_HOST` is set automatically on Vercel. Deploy.
+`AUTH_TRUST_HOST` is set automatically on Vercel. `NEXT_PUBLIC_SITE_URL` is baked in at build time, so
+**redeploy after changing it**. Deploy.
+
+## Password-reset emails
+
+Forgot-password emails a one-hour, single-use link. It needs an email provider; the code uses
+[Resend](https://resend.com) through its HTTP API (no extra dependency). Setup:
+
+1. Create a Resend account and an API key.
+2. **Verify a sending domain** in Resend and use an address on it for `EMAIL_FROM`. Resend's shared test
+   sender (`onboarding@resend.dev`) can normally only deliver to your own account email, so it will not
+   reach other users. Check Resend's current rules for your plan.
+3. Set `RESEND_API_KEY`, `EMAIL_FROM` and `NEXT_PUBLIC_SITE_URL` in Vercel and redeploy.
+
+Without a provider the app still answers the form normally, but **no email is sent** and the server log
+shows `password reset email failed`. Check Vercel's function logs if users say nothing arrives.
+Using another provider means replacing the `fetch` call in `src/server/email.ts`.
+
+**Order matters when upgrading an existing deployment:** run `npm run db:migrate` against Turso first
+(the migration only adds a table and a nullable column, so the old code keeps working), then deploy.
 
 ## 5. Check the live site
 
@@ -64,13 +86,18 @@ environment variables for Production (and Preview if you use previews):
 - [ ] Open it on a phone: the bottom tab bar is visible and nothing scrolls sideways
 - [ ] Register a second user: they see none of the first user's data
 - [ ] Turso dashboard shows rows in `users` and `transactions`
+- [ ] "Forgot password?" on the login page: you receive the email, the link opens a form, the new
+      password works, the old one does not, and the link cannot be used a second time
+- [ ] The link in the email starts with your real URL, not `localhost`
 
 ## Notes
 
 - **Backups:** Turso offers point-in-time restore and dumps (`turso db shell budget-manager .dump`).
   Check what your plan includes. Financial data is worth a periodic dump.
-- **Passwords:** bcrypt (cost 12) via `bcryptjs`. There is no password reset or email verification yet;
-  a forgotten password cannot be recovered. Add this before inviting people you cannot help in person.
+- **Passwords:** bcrypt (cost 12) via `bcryptjs`. Resetting a password signs out every other session
+  (sessions carry the time of the last password change and are rejected once it differs). There is no
+  email verification at sign-up: anyone can register an address they don't own, and a reset email
+  only proves control of the address it is sent to.
 - **Rate limiting:** there is none on login or sign-up. Fine for a private deployment; add it before
   making the site public.
 - **Rotating `AUTH_SECRET`** signs everyone out (sessions are JWTs signed with it).

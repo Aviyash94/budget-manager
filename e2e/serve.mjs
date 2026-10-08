@@ -5,6 +5,7 @@ import { rmSync } from "node:fs";
 
 const PORT = process.env.E2E_PORT ?? "3100";
 const DB_FILE = "e2e.db";
+const OUTBOX = "e2e-outbox";
 
 const env = {
   ...process.env,
@@ -13,6 +14,10 @@ const env = {
   AUTH_SECRET: "e2e-only-secret-not-for-real-use",
   AUTH_TRUST_HOST: "true",
   NEXT_DIST_DIR: ".next-e2e",
+  // Emails land as JSON files in e2e-outbox/ instead of being sent (see src/server/email.ts).
+  NEXT_PUBLIC_SITE_URL: `http://localhost:${PORT}`,
+  EMAIL_OUTBOX_DIR: OUTBOX,
+  RESEND_API_KEY: "",
 };
 
 function run(cmd, args) {
@@ -21,6 +26,7 @@ function run(cmd, args) {
 }
 
 rmSync(DB_FILE, { force: true });
+rmSync(OUTBOX, { recursive: true, force: true });
 run("npx", ["drizzle-kit", "migrate"]);
 run("npx", ["next", "build"]);
 

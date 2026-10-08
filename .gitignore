@@ -56,3 +56,4 @@ e2e.db*
 
 # .agent
 .agents
+/e2e-outbox/

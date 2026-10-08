@@ -9,13 +9,25 @@ export const credentialsSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
-export const registerSchema = z.object({
-  email,
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .max(72, "Password must be at most 72 characters"), // bcrypt ignores bytes past 72
-});
+const newPassword = z
+  .string()
+  .min(8, "Password must be at least 8 characters")
+  .max(72, "Password must be at most 72 characters"); // bcrypt ignores bytes past 72
+
+export const registerSchema = z.object({ email, password: newPassword });
+
+export const forgotPasswordSchema = z.object({ email });
+
+export const resetPasswordSchema = z
+  .object({
+    token: z.string().min(1, "This reset link is invalid or has expired."),
+    password: newPassword,
+    confirm: z.string(),
+  })
+  .refine((v) => v.password === v.confirm, {
+    path: ["confirm"],
+    message: "The two passwords don't match",
+  });
 
 /** Form string like "1,234.50" -> integer cents. */
 const money = z.string().transform((s, ctx) => {

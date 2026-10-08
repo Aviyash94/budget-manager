@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { login, register, type FormState } from "./actions";
+import { AuthShell, FormError, Notice } from "./auth-shell";
 
-export function AuthForm({ mode }: { mode: "login" | "register" }) {
+export function AuthForm({ mode, notice }: { mode: "login" | "register"; notice?: string }) {
   const isLogin = mode === "login";
   const [state, action, pending] = useActionState<FormState, FormData>(
     isLogin ? login : register,
@@ -12,21 +13,11 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
   );
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-6 px-4 py-10">
-      <div className="text-center">
-        <span
-          aria-hidden
-          className="mx-auto grid size-16 place-items-center rounded-3xl bg-pink text-3xl shadow-sm"
-        >
-          💸
-        </span>
-        <h1 className="mt-4 text-3xl font-black">
-          {isLogin ? "Welcome back" : "Let’s get started"}
-        </h1>
-        <p className="mt-1 text-sm text-ink-soft">
-          {isLogin ? "Sign in to see your budget." : "Create an account to plan your month."}
-        </p>
-      </div>
+    <AuthShell
+      title={isLogin ? "Welcome back" : "Let’s get started"}
+      subtitle={isLogin ? "Sign in to see your budget." : "Create an account to plan your month."}
+    >
+      {notice && <Notice>{notice}</Notice>}
 
       <form action={action} className="card space-y-4">
         <label className="label">
@@ -54,14 +45,15 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
           {!isLogin && <span className="font-semibold">At least 8 characters.</span>}
         </label>
 
-        {state?.error && (
-          <p
-            role="alert"
-            className="rounded-2xl bg-pink-soft px-4 py-3 text-sm font-bold text-pink-deep ring-1 ring-pink"
-          >
-            ⚠️ {state.error}
+        {isLogin && (
+          <p className="-mt-1 text-right text-sm">
+            <Link href="/forgot-password" className="font-bold text-lav-deep underline">
+              Forgot password?
+            </Link>
           </p>
         )}
+
+        {state?.error && <FormError>{state.error}</FormError>}
 
         <button type="submit" disabled={pending} className="btn w-full">
           {pending ? "Please wait…" : isLogin ? "Sign in" : "Create account"}
@@ -77,6 +69,6 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
           {isLogin ? "Create an account" : "Sign in"}
         </Link>
       </p>
-    </main>
+    </AuthShell>
   );
 }
